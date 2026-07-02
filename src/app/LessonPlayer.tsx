@@ -42,19 +42,23 @@ export default function LessonPlayer() {
     )
   }
 
+  // La « key » force React à reconstruire ENTIÈREMENT le lecteur quand on
+  // change de mission (via « Mission suivante » notamment) : palette de blocs,
+  // consigne et atelier repartent de zéro au lieu d'hériter de la mission d'avant.
+  const k = found.lesson.id
   switch (content.kind) {
     case 'story':
-      return <StoryPlayer lesson={found.lesson} world={found.world} content={content} />
+      return <StoryPlayer key={k} lesson={found.lesson} world={found.world} content={content} />
     case 'quiz':
-      return <QuizPlayer lesson={found.lesson} world={found.world} content={content} />
+      return <QuizPlayer key={k} lesson={found.lesson} world={found.world} content={content} />
     case 'grid':
-      return <PuzzlePlayer lesson={found.lesson} world={found.world} content={content} />
+      return <PuzzlePlayer key={k} lesson={found.lesson} world={found.world} content={content} />
     case 'studio':
-      return <StudioLessonPlayer lesson={found.lesson} world={found.world} content={content} />
+      return <StudioLessonPlayer key={k} lesson={found.lesson} world={found.world} content={content} />
     case 'code':
-      return <CodePlayer lesson={found.lesson} world={found.world} content={content} />
+      return <CodePlayer key={k} lesson={found.lesson} world={found.world} content={content} />
     case 'diplome':
-      return <DiplomaPlayer lesson={found.lesson} />
+      return <DiplomaPlayer key={k} lesson={found.lesson} />
     default:
       return null
   }
