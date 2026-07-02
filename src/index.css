@@ -58,3 +58,9 @@
 .blocklyMainBackground {
   stroke: none !important;
 }
+/* Barre de défilement de la palette : bien visible pour les enfants */
+.blocklyFlyoutScrollbar .blocklyScrollbarHandle {
+  fill: #3eddf2 !important;
+  fill-opacity: 0.85 !important;
+  rx: 5;
+}

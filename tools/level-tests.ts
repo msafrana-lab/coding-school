@@ -57,7 +57,84 @@ const brokenPrograms: Record<string, { code: string; expect: string }> = {
   'nebula-repare': { code: `avancer();avancr();tournerADroite();avancer();avancer();`, expect: 'error' },
 }
 
+/**
+ * Audit de cohérence : les blocs NÉCESSAIRES à la solution de référence
+ * doivent tous être proposés dans la palette de la mission.
+ */
+const requiredBlocks: Record<string, string[]> = {
+  'lune-1': ['avancer'],
+  'lune-2': ['avancer', 'tourner_droite'],
+  'lune-3': ['avancer', 'tourner_gauche', 'tourner_droite'],
+  'lune-repare': ['avancer', 'tourner_gauche'],
+  'lune-4': ['avancer'],
+  'lune-defi': ['avancer', 'tourner_gauche', 'tourner_droite'],
+  'boucla-1': ['avancer', 'repeter'],
+  'boucla-2': ['avancer', 'tourner_gauche', 'tourner_droite', 'repeter'],
+  'boucla-3': ['avancer', 'tourner_droite', 'repeter'],
+  'boucla-repare': ['avancer', 'repeter'],
+  'boucla-4': ['avancer', 'tourner_gauche', 'tourner_droite', 'repeter_jusqua'],
+  'boucla-defi': ['avancer', 'tourner_droite', 'repeter'],
+  'choizix-1': ['avancer', 'tourner_droite', 'tant_que'],
+  'choizix-2': ['avancer', 'tourner_droite', 'repeter_jusqua', 'si_sinon'],
+  'choizix-3': ['avancer', 'tourner_gauche', 'repeter_jusqua', 'si_sinon'],
+  'choizix-repare': ['avancer', 'tourner_droite', 'repeter_jusqua', 'si_sinon'],
+  'choizix-4': ['avancer', 'tourner_gauche', 'tourner_droite', 'repeter_jusqua', 'si', 'si_sinon'],
+  'choizix-defi': ['avancer', 'tourner_gauche', 'tourner_droite', 'repeter_jusqua', 'si', 'si_sinon'],
+  'memora-1': ['avancer', 'repeter', 'repeter_valeur', 'cristaux_ramasses'],
+  'memora-2': ['avancer', 'tourner_droite', 'var_mettre', 'var_ajouter', 'repeter_valeur'],
+  'memora-3': ['avancer', 'tourner_gauche', 'var_mettre', 'repeter_valeur'],
+  'memora-repare': ['avancer', 'var_mettre', 'repeter_valeur'],
+  'memora-defi': ['avancer', 'tourner_droite', 'repeter', 'repeter_valeur', 'cristaux_ramasses'],
+  'fabrika-1': ['motif_def_a', 'motif_a', 'avancer', 'tourner_gauche', 'tourner_droite'],
+  'fabrika-2': ['motif_def_a', 'motif_a', 'avancer', 'tourner_gauche', 'tourner_droite', 'repeter'],
+  'fabrika-3': ['motif_def_a', 'motif_def_b', 'motif_a', 'motif_b', 'avancer', 'tourner_gauche', 'tourner_droite', 'repeter'],
+  'fabrika-repare': ['motif_def_a', 'motif_a', 'avancer', 'tourner_droite', 'repeter'],
+  'fabrika-defi': ['motif_def_a', 'motif_a', 'avancer', 'tourner_gauche', 'tourner_droite', 'repeter'],
+}
+
+/** Nombre minimal d'exemplaires nécessaires quand une mission limite un bloc. */
+const requiredCounts: Record<string, Record<string, number>> = {
+  'boucla-1': { avancer: 1 },
+  'memora-2': { avancer: 2 },
+}
+
 let fails = 0
+
+for (const [id, needed] of Object.entries(requiredBlocks)) {
+  const content = getContent(id) as PuzzleContent | undefined
+  if (!content || content.kind !== 'grid') {
+    console.log(`✗ ${id} : contenu introuvable pour l'audit de palette`)
+    fails++
+    continue
+  }
+  const missing = needed.filter((b) => !content.blocks.includes(b))
+  if (missing.length) {
+    console.log(`✗ ${id} : blocs NÉCESSAIRES absents de la palette → ${missing.join(', ')}`)
+    fails++
+  }
+  // Les blocs du programme de départ doivent aussi être disponibles (sinon,
+  // un enfant qui supprime un bloc ne peut plus le remettre).
+  if (content.starterXml) {
+    const types = [...content.starterXml.matchAll(/<block type="([a-z_]+)"/g)].map((m) => m[1])
+    const orphan = types.filter((t) => t !== 'quand_demarre' && !content.blocks.includes(t))
+    if (orphan.length) {
+      console.log(`✗ ${id} : blocs du programme de départ hors palette → ${orphan.join(', ')}`)
+      fails++
+    }
+  }
+  // Les limites d'exemplaires ne doivent pas rendre la solution impossible.
+  const counts = requiredCounts[id]
+  if (content.maxInstances) {
+    for (const [blockId, max] of Object.entries(content.maxInstances)) {
+      const neededCount = counts?.[blockId] ?? (needed.includes(blockId) ? 1 : 0)
+      if (neededCount > max) {
+        console.log(`✗ ${id} : limite ${blockId}=${max} mais la solution en demande ${neededCount}`)
+        fails++
+      }
+    }
+  }
+}
+console.log('Audit de palette : terminé pour', Object.keys(requiredBlocks).length, 'missions\n')
 
 for (const [id, code] of Object.entries(solutions)) {
   const content = getContent(id) as PuzzleContent | undefined

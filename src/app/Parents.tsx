@@ -7,7 +7,7 @@ import Cosmo from '../ui/Cosmo'
 import { soundConfig } from '../lib/sounds'
 
 /** Une petite porte que seuls les grands savent ouvrir. */
-function AdultGate({ onOpen }: { onOpen: () => void }) {
+function AdultGate({ onOpen, onSignOut }: { onOpen: () => void; onSignOut: () => void }) {
   const [q] = useState(() => {
     const a = 6 + Math.floor(Math.random() * 4) // 6-9
     const b = 6 + Math.floor(Math.random() * 4)
@@ -51,6 +51,13 @@ function AdultGate({ onOpen }: { onOpen: () => void }) {
         </form>
         {wrong && <p className="mt-2 text-sm font-semibold text-coral-400">Hmm, pas tout à fait…</p>}
       </Card>
+
+      <div className="mt-2 w-full border-t border-white/10 pt-5">
+        <p className="mb-2 text-sm text-white/60">Quelqu’un d’autre veut jouer sur cet appareil ?</p>
+        <Button variant="secondary" className="w-full" onClick={onSignOut}>
+          🔄 Changer d’astronaute (se déconnecter)
+        </Button>
+      </div>
     </div>
   )
 }
@@ -88,7 +95,7 @@ export default function Parents() {
   const currentWorld =
     WORLDS.find((w) => w.lessons.some((l) => !progress[l.id]?.completed)) ?? WORLDS[WORLDS.length - 1]
 
-  if (!open) return <AdultGate onOpen={() => setOpen(true)} />
+  if (!open) return <AdultGate onOpen={() => setOpen(true)} onSignOut={() => signOut()} />
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-8 pb-16">

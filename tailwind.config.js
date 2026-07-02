@@ -73,6 +73,10 @@ export default {
           '0%': { transform: 'translateY(24px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        'bounce-x': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(-8px)' },
+        },
       },
       animation: {
         float: 'float 4s ease-in-out infinite',
@@ -80,6 +84,7 @@ export default {
         'pop-in': 'pop-in 0.35s ease-out both',
         wiggle: 'wiggle 0.5s ease-in-out',
         'slide-up': 'slide-up 0.4s ease-out both',
+        'bounce-x': 'bounce-x 0.9s ease-in-out infinite',
       },
     },
   },
