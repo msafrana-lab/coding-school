@@ -48,6 +48,12 @@ export default function AppShell() {
             <Logo className="h-8" />
           </Link>
           <div className="flex items-center gap-2">
+            <Link
+              to="/app/studio"
+              className="hidden rounded-full border border-nebula-500/40 bg-nebula-500/15 px-3 py-1 text-sm font-bold text-nebula-300 transition hover:bg-nebula-500/30 sm:block"
+            >
+              🎮 Studio
+            </Link>
             <Pill className="bg-star-400/15 text-star-400 border border-star-400/30">
               ⭐ {profile.xp}
             </Pill>

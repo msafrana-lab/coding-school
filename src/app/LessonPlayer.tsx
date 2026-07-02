@@ -4,6 +4,7 @@ import { getContent } from '../curriculum/content'
 import PuzzlePlayer from '../game/PuzzlePlayer'
 import StoryPlayer from '../game/StoryPlayer'
 import QuizPlayer from '../game/QuizPlayer'
+import StudioLessonPlayer from '../game/StudioLessonPlayer'
 import Cosmo from '../ui/Cosmo'
 import { Button, SpeechBubble } from '../ui/kit'
 
@@ -46,6 +47,8 @@ export default function LessonPlayer() {
       return <QuizPlayer lesson={found.lesson} world={found.world} content={content} />
     case 'grid':
       return <PuzzlePlayer lesson={found.lesson} world={found.world} content={content} />
+    case 'studio':
+      return <StudioLessonPlayer lesson={found.lesson} world={found.world} content={content} />
     default:
       return null
   }

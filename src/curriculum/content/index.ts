@@ -4,6 +4,7 @@ import { boucla } from './boucla'
 import { choizix } from './choizix'
 import { memora } from './memora'
 import { fabrika } from './fabrika'
+import { studio } from './studio'
 
 const ALL: Record<string, LessonContent> = {
   ...lune,
@@ -11,6 +12,7 @@ const ALL: Record<string, LessonContent> = {
   ...choizix,
   ...memora,
   ...fabrika,
+  ...studio,
 }
 
 export function getContent(lessonId: string): LessonContent | undefined {
