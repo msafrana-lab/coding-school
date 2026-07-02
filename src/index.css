@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-space-950 text-white font-body antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Blockly overrides (appliqués quand l'atelier est monté) */
+.blocklyToolboxDiv {
+  background: #141b4d !important;
+  border-radius: 0 16px 16px 0;
+}
+.blocklyFlyout {
+  border-radius: 0 16px 16px 0;
+}
+.blocklyMainBackground {
+  stroke: none !important;
+}
