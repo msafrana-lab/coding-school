@@ -202,6 +202,7 @@ export default function PuzzlePlayer({
             blocks={content.blocks}
             starterXml={content.starterXml}
             horizontal={horizontal}
+            maxInstances={content.maxInstances}
             onWorkspace={(ws) => (wsRef.current = ws)}
           />
         </div>

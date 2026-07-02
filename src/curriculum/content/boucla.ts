@@ -18,8 +18,9 @@ export const boucla: Record<string, LessonContent> = {
     start: { x: 0, y: 1, dir: 'E' },
     blocks: ['avancer', 'repeter'],
     par: 2,
+    maxInstances: { avancer: 1 },
     goal: 'arrivee',
-    brief: 'Six cases tout droit… Tu POURRAIS mettre 6 blocs « avancer ». Mais essaie la boucle « répéter » : mets « avancer » DEDANS !',
+    brief: 'Six cases tout droit… mais tu n’as qu’UN seul bloc « avancer » ! La solution : mets-le DANS la boucle « répéter ».',
     hints: [
       'Glisse le bloc « avancer » À L’INTÉRIEUR du bloc « répéter ».',
       'Règle la boucle sur 6 : répéter 6 fois → avancer. Seulement 2 blocs !',

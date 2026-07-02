@@ -11,11 +11,13 @@ export default function BlocklyWorkspace({
   blocks,
   starterXml,
   horizontal = false,
+  maxInstances,
   onWorkspace,
 }: {
   blocks: string[]
   starterXml?: string
   horizontal?: boolean
+  maxInstances?: Record<string, number>
   onWorkspace: (ws: Blockly.WorkspaceSvg) => void
 }) {
   const divRef = useRef<HTMLDivElement>(null)
@@ -31,6 +33,7 @@ export default function BlocklyWorkspace({
       toolbox: buildToolbox(blocks) as Blockly.utils.toolbox.ToolboxDefinition,
       horizontalLayout: horizontal,
       toolboxPosition: 'start',
+      maxInstances,
       trashcan: false,
       sounds: false,
       scrollbars: true,

@@ -50,6 +50,8 @@ export interface PuzzleContent {
   starterXml?: string
   /** Objectif : atteindre l'arrivée et/ou tout ramasser */
   goal?: 'arrivee' | 'cristaux' | 'les-deux'
+  /** Limite le nombre d'exemplaires d'un bloc (pour pousser vers la bonne technique) */
+  maxInstances?: Record<string, number>
 }
 
 export interface StoryPage {

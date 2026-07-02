@@ -26,6 +26,16 @@ const solutions: Record<string, string> = {
   'choizix-repare': `while(!surArrivee()){if(cheminDevant()){${A}}else{${TD}}}`,
   'choizix-4': `while(!surArrivee()){if(cheminADroite()){${TD}${A}}else{if(cheminDevant()){${A}}else{${TG}}}}`,
   'choizix-defi': `while(!surArrivee()){if(cheminADroite()){${TD}${A}}else{if(cheminDevant()){${A}}else{${TG}}}}`,
+  'memora-1': `for(let i=0;i<3;i++){${A}} for(let j=0;j<cristaux();j++){${A}}`,
+  'memora-2': `let b=2; for(let i=0;i<b;i++){${A}} ${TD} b=b+1; for(let i=0;i<b;i++){${A}}`,
+  'memora-3': `let b=4; for(let i=0;i<b;i++){${A}} ${TG} for(let i=0;i<b;i++){${A}}`,
+  'memora-repare': `let b=5; for(let i=0;i<b;i++){${A}}`,
+  'memora-defi': `for(let i=0;i<4;i++){${A}} ${TD} for(let j=0;j<cristaux();j++){${A}}`,
+  'fabrika-1': `function m(){${A}${TG}${A}${TD}} m();m();m();`,
+  'fabrika-2': `function m(){${A}${TG}${A}${TD}} for(let i=0;i<5;i++){m()}`,
+  'fabrika-3': `function s(){${A}${A}${TD}} function l(){${A}${A}${TG}} s();l();s();l();`,
+  'fabrika-repare': `function m(){${A}${A}${TD}} for(let i=0;i<4;i++){m()}`,
+  'fabrika-defi': `function m(){${A}${TG}${A}${TD}} for(let i=0;i<5;i++){m()}`,
 }
 
 /** Programmes cassés fournis aux missions « répare » : ils doivent échouer. */
@@ -36,6 +46,8 @@ const brokenPrograms: Record<string, { code: string; expect: string }> = {
     code: `let LOOP=0; while(!surArrivee()){ if(++LOOP>500) throw new RangeError('x'); if(cheminDevant()){${TD}}else{${A}}}`,
     expect: 'crash|error',
   },
+  'memora-repare': { code: `let b=0; for(let i=0;i<b;i++){${A}}`, expect: 'incomplete' },
+  'fabrika-repare': { code: `function m(){${A}${TD}${A}} for(let i=0;i<4;i++){m()}`, expect: 'crash' },
 }
 
 let fails = 0
