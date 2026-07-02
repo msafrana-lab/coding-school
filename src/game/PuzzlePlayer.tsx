@@ -6,6 +6,7 @@ import type { LessonMeta, PuzzleContent, World } from '../curriculum/types'
 import { nextLessonId } from '../curriculum'
 import { useStore } from '../lib/store'
 import { SimWorld, type RunResult, type Step } from './world'
+import { sounds } from '../lib/sounds'
 import GridView, { angleFor, initialVisual, type GridVisual } from './GridView'
 import BlocklyWorkspace from './BlocklyWorkspace'
 import { generateCode, starsFor } from './runner'
@@ -93,14 +94,17 @@ export default function PuzzlePlayer({
       } else if (s.t === 'pickup') {
         v = { ...v, collected: new Set([...v.collected, `${s.x},${s.y}`]) }
         setVisual(v)
+        sounds.pickup()
         await sleep(200 * speed)
       } else if (s.t === 'crash') {
         v = { ...v, crash: { x: s.x, y: s.y } }
         setVisual(v)
+        sounds.crash()
         await sleep(700)
       } else if (s.t === 'win') {
         v = { ...v, won: true }
         setVisual(v)
+        sounds.win()
         await sleep(350)
       }
     }
@@ -132,6 +136,7 @@ export default function PuzzlePlayer({
 
   function runProgram() {
     if (!wsRef.current || phase === 'running') return
+    sounds.click()
     setVisual(initialVisual(content))
     setPhase('running')
     const { code } = generateCode(wsRef.current)

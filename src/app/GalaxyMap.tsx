@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { WORLDS } from '../curriculum'
 import type { LessonMeta, LessonType, World } from '../curriculum/types'
 import { useStore } from '../lib/store'
@@ -150,6 +150,7 @@ function WorldBanner({ world, index, done, total }: { world: World; index: numbe
 
 export default function GalaxyMap() {
   const { profile, progress } = useStore()
+  const navigate = useNavigate()
   const currentRef = useRef<HTMLDivElement>(null)
 
   // Statut de chaque leçon : faites → done, la première non faite → current, le reste → locked
@@ -213,6 +214,15 @@ export default function GalaxyMap() {
           </section>
         )
       })}
+
+      {/* Accès rapide au Studio sur mobile */}
+      <button
+        onClick={() => navigate('/app/studio')}
+        className="fixed bottom-5 right-4 z-30 grid h-14 w-14 place-items-center rounded-full bg-nebula-500 text-2xl shadow-glow transition active:scale-90 sm:hidden"
+        aria-label="Ouvrir le Studio"
+      >
+        🎮
+      </button>
 
       <div className="mt-12 flex flex-col items-center gap-2 pb-8 text-center">
         <div className="grid h-24 w-24 place-items-center rounded-full bg-star-400/15 text-5xl shadow-glow">

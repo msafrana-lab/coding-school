@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Landing from './pages/Landing'
 import Connexion from './pages/Connexion'
+import Demo from './pages/Demo'
 import AppShell from './app/AppShell'
 import GalaxyMap from './app/GalaxyMap'
 import LessonPlayer from './app/LessonPlayer'
@@ -13,6 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/connexion" element={<Connexion />} />
+        <Route path="/demo" element={<Demo />} />
         <Route path="/app" element={<AppShell />}>
           <Route index element={<GalaxyMap />} />
           <Route path="lecon/:id" element={<LessonPlayer />} />

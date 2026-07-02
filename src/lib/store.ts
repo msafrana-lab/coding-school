@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './supabase'
+import { soundConfig } from './sounds'
 import type { Profile } from './types'
 
 type ProgressMap = Record<string, { stars: number; completed: boolean; attempts: number }>
@@ -83,6 +84,7 @@ export const useStore = create<State>((set, get) => ({
     for (const r of rows ?? []) {
       progress[r.lesson_id] = { stars: r.stars, completed: r.completed, attempts: r.attempts }
     }
+    if (profile) soundConfig.on = (profile as Profile).sound_on
     set({ profile: profile as Profile | null, progress })
   },
 

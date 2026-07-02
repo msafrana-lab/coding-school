@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import confetti from 'canvas-confetti'
+import { sounds } from '../lib/sounds'
 import type { LessonMeta, QuizContent, World } from '../curriculum/types'
 import { nextLessonId } from '../curriculum'
 import { useStore } from '../lib/store'
@@ -32,8 +33,11 @@ export default function QuizPlayer({
     if (correct) return
     setPicked(i)
     if (i !== q.answer) {
+      sounds.wrong()
       setMistakes((m) => m + 1)
       setWrongPicks((w) => [...w, i])
+    } else {
+      sounds.correct()
     }
   }
 

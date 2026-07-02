@@ -3,6 +3,7 @@ import type * as BlocklyNS from 'blockly/core'
 import * as Blockly from 'blockly/core'
 import confetti from 'canvas-confetti'
 import { supabase } from '../lib/supabase'
+import { sounds } from '../lib/sounds'
 import { useStore } from '../lib/store'
 import { BACKGROUNDS, SPRITE_TYPES, checkStep, emptyScene, type Scene, type SceneSprite, type SpriteTypeId } from './model'
 import { compileRules } from './blocks'
@@ -181,6 +182,12 @@ export default function StudioView({
           setWonOnce(true)
           confetti({ particleCount: 110, spread: 70, origin: { y: 0.6 }, colors: ['#8B63F7', '#17C3DE', '#FFD23F'] })
         }
+      },
+      onSound: (kind) => {
+        if (kind === 'score') sounds.star()
+        else if (kind === 'win') sounds.win()
+        else if (kind === 'lose') sounds.lose()
+        else sounds.click()
       },
     })
     engineRef.current = engine
