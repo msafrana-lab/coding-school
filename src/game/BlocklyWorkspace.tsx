@@ -78,6 +78,43 @@ export default function BlocklyWorkspace({
     wsRef.current = ws
     onWorkspace(ws)
 
+    // Toucher un bloc de la palette = l'ajouter au bout du programme.
+    // (Le glisser-déposer classique reste possible.)
+    const flyoutWs = ws.getFlyout()?.getWorkspace()
+    flyoutWs?.addChangeListener((e: Blockly.Events.Abstract) => {
+      if (e.type !== Blockly.Events.CLICK) return
+      const ev = e as Blockly.Events.Click
+      if (!ev.blockId) return
+      const src = flyoutWs.getBlockById(ev.blockId)
+      if (!src || !src.isEnabled()) return
+      // Seuls les blocs « instruction » s'enchaînent d'un simple toucher
+      if (!src.previousConnection && !src.type.startsWith('motif_def')) return
+      try {
+        const saved = Blockly.serialization.blocks.save(src)
+        if (!saved) return
+        delete (saved as { x?: number }).x
+        delete (saved as { y?: number }).y
+        const added = Blockly.serialization.blocks.append(saved, ws, { recordUndo: true })
+        const start = ws.getTopBlocks(true).find((b) => b.type === 'quand_demarre')
+        if (added.previousConnection && start) {
+          let last: Blockly.Block = start
+          while (last.getNextBlock()) last = last.getNextBlock() as Blockly.Block
+          if (last.nextConnection) {
+            last.nextConnection.connect(added.previousConnection)
+          } else {
+            added.moveBy(60, 60)
+          }
+        } else {
+          const n = ws.getTopBlocks(false).length
+          added.moveBy(240, 40 + n * 30)
+        }
+        ;(added as Blockly.BlockSvg).select()
+        ws.centerOnBlock(added.id)
+      } catch {
+        // en cas de pépin, le glisser-déposer reste la voie normale
+      }
+    })
+
     // Porte d'entrée pour les tests automatiques
     ;(window as unknown as Record<string, unknown>).__astroLoadXml = (x: string) => {
       ws.clear()

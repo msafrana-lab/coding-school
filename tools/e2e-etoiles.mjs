@@ -36,7 +36,7 @@ const page = await ctx.newPage()
 
 async function joue(xml) {
   await page.evaluate((x) => window.__astroLoadXml(x), xml)
-  await page.getByRole('button', { name: 'TESTER' }).click()
+  await page.getByRole('button', { name: '▶ TESTER' }).click()
   await page.waitForSelector('text=Mission réussie', { timeout: 15000 })
   return state.progress.find((p) => p.lesson_id === 'lune-1')?.stars
 }
@@ -63,7 +63,7 @@ const page2 = await ctx2.newPage()
 await page2.goto('http://localhost:5173/app/lecon/lune-1', { waitUntil: 'networkidle' })
 await page2.waitForTimeout(1200)
 await page2.evaluate((x) => window.__astroLoadXml(x), SOLUTION_AVEC_BROUILLON)
-await page2.getByRole('button', { name: 'TESTER' }).click()
+await page2.getByRole('button', { name: '▶ TESTER' }).click()
 await page2.waitForSelector('text=Mission réussie', { timeout: 15000 })
 const s2 = state2.progress.find((p) => p.lesson_id === 'lune-1')?.stars
 if (s2 === 3) console.log('OK : les blocs brouillon détachés ne comptent pas → 3 étoiles')

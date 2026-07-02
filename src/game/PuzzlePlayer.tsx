@@ -49,6 +49,8 @@ export default function PuzzlePlayer({
   const [visual, setVisual] = useState<GridVisual>(() => initialVisual(content))
   const [phase, setPhase] = useState<Phase>('edit')
   const [bubble, setBubble] = useState<string>(content.brief)
+  const [bubbleOpen, setBubbleOpen] = useState(true)
+  const [gridBig, setGridBig] = useState(false)
   const [hintIndex, setHintIndex] = useState(0)
   const [failInfo, setFailInfo] = useState(FAIL_MESSAGES.inconnu)
   const [earned, setEarned] = useState({ stars: 0, xp: 0, blocks: 0 })
@@ -62,6 +64,7 @@ export default function PuzzlePlayer({
     wsRef.current?.highlightBlock(null)
     setVisual(initialVisual(content))
     setPhase('edit')
+    setGridBig(false)
   }, [content])
 
   useEffect(() => reset(), [lesson.id, reset])
@@ -137,6 +140,10 @@ export default function PuzzlePlayer({
   function runProgram() {
     if (!wsRef.current || phase === 'running') return
     sounds.click()
+    if (horizontal) {
+      setGridBig(true)
+      setBubbleOpen(false)
+    }
     setVisual(initialVisual(content))
     setPhase('running')
     const { code } = generateCode(wsRef.current)
@@ -148,6 +155,7 @@ export default function PuzzlePlayer({
   function showHint() {
     const hint = content.hints[Math.min(hintIndex, content.hints.length - 1)]
     setBubble('💡 ' + hint)
+    setBubbleOpen(true)
     setHintIndex((i) => Math.min(i + 1, content.hints.length - 1))
   }
 
@@ -175,43 +183,121 @@ export default function PuzzlePlayer({
         </Pill>
       </header>
 
-      <div className="flex min-h-0 flex-1 flex-col lg:flex-row lg:gap-3 lg:px-3 lg:pb-3">
-        {/* Côté mission */}
-        <div className="flex flex-col gap-2 px-3 lg:w-[42%] lg:px-0">
-          <div className="relative rounded-2xl bg-white px-4 py-2.5 text-sm font-semibold text-space-900 shadow-card">
-            <span className="absolute -bottom-1.5 left-8 h-3 w-3 rotate-45 bg-white" aria-hidden />
-            {bubble}
+      {horizontal ? (
+        /* ---- TÉLÉPHONE : l'atelier occupe tout l'écran, la carte flotte ---- */
+        <div className="relative min-h-0 flex-1">
+          <div className="absolute inset-0 overflow-hidden border-t border-white/10">
+            <BlocklyWorkspace
+              blocks={content.blocks}
+              starterXml={content.starterXml}
+              horizontal
+              maxInstances={content.maxInstances}
+              onWorkspace={(ws) => (wsRef.current = ws)}
+            />
           </div>
-          <div
-            className="mx-auto w-full"
-            style={{ width: `min(100%, ${((horizontal ? 34 : 52) * W) / H}dvh)` }}
+
+          {/* Consigne repliable */}
+          {bubbleOpen ? (
+            <button
+              onClick={() => setBubbleOpen(false)}
+              className="absolute left-2 top-[104px] z-20 max-w-[58%] rounded-2xl bg-white px-3 py-2 text-left text-[13px] font-semibold leading-snug text-space-900 shadow-card"
+            >
+              {bubble}
+              <span className="mt-1 block text-[10px] font-bold text-space-900/40">
+                toucher pour replier ▲
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setBubbleOpen(true)}
+              className="absolute left-2 top-[104px] z-20 grid h-11 w-11 place-items-center rounded-full bg-white text-xl shadow-card"
+              aria-label="Voir la consigne"
+            >
+              💬
+            </button>
+          )}
+
+          {/* Mini-carte flottante : toucher pour agrandir */}
+          <button
+            onClick={() => setGridBig(true)}
+            className="absolute right-2 top-[104px] z-10 w-[37%] rounded-xl border border-white/25 bg-space-900/90 p-1 shadow-card active:scale-95"
+            aria-label="Agrandir la carte"
           >
             <GridView def={content} visual={visual} />
-          </div>
-          <div className="flex items-center justify-center gap-2 pb-1">
-            <Button variant="success" size={horizontal ? 'md' : 'lg'} onClick={runProgram} disabled={phase === 'running'} className="flex-1 max-w-56">
+            <span className="block pt-0.5 text-center text-[10px] font-bold text-white/50">
+              🔍 toucher pour agrandir
+            </span>
+          </button>
+
+          {/* Barre d'actions collée en bas */}
+          <div className="absolute inset-x-2 bottom-2 z-20 flex items-center gap-2">
+            <Button variant="success" onClick={runProgram} disabled={phase === 'running'} className="flex-1">
               {phase === 'running' ? '🚀 En vol…' : '▶ TESTER'}
             </Button>
-            <Button variant="secondary" size={horizontal ? 'md' : 'lg'} onClick={reset} aria-label="Recommencer">
+            <Button variant="secondary" onClick={reset} aria-label="Recommencer">
               ↺
             </Button>
-            <Button variant="star" size={horizontal ? 'md' : 'lg'} onClick={showHint} aria-label="Indice">
+            <Button variant="star" onClick={showHint} aria-label="Indice">
               💡
             </Button>
           </div>
         </div>
+      ) : (
+        /* ---- ORDINATEUR : mission à gauche, atelier à droite ---- */
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row lg:gap-3 lg:px-3 lg:pb-3">
+          <div className="flex flex-col gap-2 px-3 lg:w-[42%] lg:px-0">
+            <div className="relative rounded-2xl bg-white px-4 py-2.5 text-sm font-semibold text-space-900 shadow-card">
+              <span className="absolute -bottom-1.5 left-8 h-3 w-3 rotate-45 bg-white" aria-hidden />
+              {bubble}
+            </div>
+            <div className="mx-auto w-full" style={{ width: `min(100%, ${(52 * W) / H}dvh)` }}>
+              <GridView def={content} visual={visual} />
+            </div>
+            <div className="flex items-center justify-center gap-2 pb-1">
+              <Button variant="success" size="lg" onClick={runProgram} disabled={phase === 'running'} className="flex-1 max-w-56">
+                {phase === 'running' ? '🚀 En vol…' : '▶ TESTER'}
+              </Button>
+              <Button variant="secondary" size="lg" onClick={reset} aria-label="Recommencer">
+                ↺
+              </Button>
+              <Button variant="star" size="lg" onClick={showHint} aria-label="Indice">
+                💡
+              </Button>
+            </div>
+          </div>
 
-        {/* Atelier de blocs */}
-        <div className="relative min-h-0 flex-1 overflow-hidden rounded-t-3xl lg:rounded-3xl border border-white/10">
-          <BlocklyWorkspace
-            blocks={content.blocks}
-            starterXml={content.starterXml}
-            horizontal={horizontal}
-            maxInstances={content.maxInstances}
-            onWorkspace={(ws) => (wsRef.current = ws)}
-          />
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-white/10">
+            <BlocklyWorkspace
+              blocks={content.blocks}
+              starterXml={content.starterXml}
+              horizontal={false}
+              maxInstances={content.maxInstances}
+              onWorkspace={(ws) => (wsRef.current = ws)}
+            />
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Grande carte (téléphone) : s'ouvre au toucher et pendant le vol */}
+      {horizontal && gridBig && (
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/75 p-4"
+          onClick={() => phase !== 'running' && setGridBig(false)}
+        >
+          <div className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="rounded-2xl border border-white/20 bg-space-900/95 p-2 shadow-card">
+              <GridView def={content} visual={visual} />
+            </div>
+            {phase !== 'running' && (
+              <div className="mt-3 flex justify-center">
+                <Button variant="secondary" onClick={() => setGridBig(false)}>
+                  ✕ Retour aux blocs
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Victoire */}
       {phase === 'win' && (

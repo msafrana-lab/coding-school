@@ -22,7 +22,7 @@ for (const [suffix, viewport] of [
   await page.screenshot({ path: `${SCRATCH}/code-1-editeur-${suffix}.png` })
   await page.getByRole('button', { name: 'avancer();' }).click()
   await page.getByRole('button', { name: 'avancer();' }).click()
-  await page.getByRole('button', { name: 'TESTER' }).click()
+  await page.getByRole('button', { name: '▶ TESTER' }).click()
   await page.waitForSelector('text=Du vrai code réussi', { timeout: 15000 })
   console.log(`[${suffix}] OK : mission code réussie via l'aide-mémoire`)
   await page.screenshot({ path: `${SCRATCH}/code-2-victoire-${suffix}.png` })
@@ -30,7 +30,7 @@ for (const [suffix, viewport] of [
   // 2) nebula-repare : le bug de frappe produit un message en français
   await page.goto('http://localhost:5173/app/lecon/nebula-repare', { waitUntil: 'networkidle' })
   await page.waitForTimeout(1200)
-  await page.getByRole('button', { name: 'TESTER' }).click()
+  await page.getByRole('button', { name: '▶ TESTER' }).click()
   await page.waitForSelector('text=avancr', { timeout: 15000 })
   console.log(`[${suffix}] OK : erreur de frappe expliquée en français`)
   await page.screenshot({ path: `${SCRATCH}/code-3-erreur-${suffix}.png` })

@@ -39,7 +39,7 @@ for (const [suffix, viewport] of [
   // Charge la solution puis teste
   await page.evaluate((xml) => window.__astroLoadXml(xml), SOLUTION_LUNE1)
   await page.waitForTimeout(300)
-  await page.getByRole('button', { name: 'TESTER' }).click()
+  await page.getByRole('button', { name: '▶ TESTER' }).click()
   await page.waitForSelector('text=Mission réussie', { timeout: 15000 })
   await page.waitForTimeout(1000)
   await page.screenshot({ path: `${SCRATCH}/puzzle-2-victoire-${suffix}.png` })
@@ -60,7 +60,7 @@ for (const [suffix, viewport] of [
       '<xml xmlns="https://developers.google.com/blockly/xml"><block type="quand_demarre" deletable="false"><next><block type="avancer"></block></next></block></xml>',
     ),
   )
-  await page.getByRole('button', { name: 'TESTER' }).click()
+  await page.getByRole('button', { name: '▶ TESTER' }).click()
   await page.waitForSelector('text=Presque', { timeout: 15000 })
   await page.screenshot({ path: `${SCRATCH}/puzzle-3-echec-${suffix}.png` })
   console.log(`[${suffix}] OK : message d'échec pédagogique affiché`)

@@ -27,7 +27,7 @@ for (const [suffix, viewport] of [
   await page.goto('http://localhost:5173/app/lecon/lune-1', { waitUntil: 'networkidle' })
   await page.waitForTimeout(1200)
   await page.evaluate((xml) => window.__astroLoadXml(xml), SOLUTION_LUNE1)
-  await page.getByRole('button', { name: 'TESTER' }).click()
+  await page.getByRole('button', { name: '▶ TESTER' }).click()
   await page.waitForSelector('text=Mission réussie', { timeout: 15000 })
   await page.getByRole('button', { name: 'Mission suivante' }).click()
   await page.waitForURL('**/lecon/lune-2', { timeout: 5000 })
