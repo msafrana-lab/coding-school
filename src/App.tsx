@@ -3,6 +3,7 @@ import Landing from './pages/Landing'
 import Connexion from './pages/Connexion'
 import AppShell from './app/AppShell'
 import GalaxyMap from './app/GalaxyMap'
+import LessonPlayer from './app/LessonPlayer'
 import Parents from './app/Parents'
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/connexion" element={<Connexion />} />
         <Route path="/app" element={<AppShell />}>
           <Route index element={<GalaxyMap />} />
+          <Route path="lecon/:id" element={<LessonPlayer />} />
           <Route path="parents" element={<Parents />} />
         </Route>
       </Routes>
