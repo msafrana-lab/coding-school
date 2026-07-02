@@ -76,16 +76,16 @@ function LessonNode({
     >
       {status === 'current' && (
         <>
-          <div className="absolute -top-5 z-10 animate-bounce whitespace-nowrap rounded-xl bg-white px-3 py-1 font-display text-xs font-bold text-space-900 shadow-card">
+          <div className="pointer-events-none absolute -top-5 z-10 animate-bounce whitespace-nowrap rounded-xl bg-white px-3 py-1 font-display text-xs font-bold text-space-900 shadow-card">
             {isFirstOfAll ? 'COMMENCE ICI !' : 'CONTINUE ICI !'}
           </div>
           <span
-            className="absolute top-3 h-[68px] w-[68px] animate-ping rounded-full opacity-30"
+            className="pointer-events-none absolute top-3 h-[68px] w-[68px] animate-ping rounded-full opacity-30"
             style={{ backgroundColor: color }}
             aria-hidden
           />
           <div
-            className={`absolute top-1/2 -translate-y-1/2 ${offset >= 0 ? '-left-24' : '-right-24'} hidden sm:block`}
+            className={`pointer-events-none absolute top-1/2 -translate-y-1/2 ${offset >= 0 ? '-left-24' : '-right-24'} hidden sm:block`}
             aria-hidden
           >
             <Cosmo pose="point" float className="h-20 w-20" />
