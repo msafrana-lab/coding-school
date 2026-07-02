@@ -36,6 +36,12 @@ const solutions: Record<string, string> = {
   'fabrika-3': `function s(){${A}${A}${TD}} function l(){${A}${A}${TG}} s();l();s();l();`,
   'fabrika-repare': `function m(){${A}${A}${TD}} for(let i=0;i<4;i++){m()}`,
   'fabrika-defi': `function m(){${A}${TG}${A}${TD}} for(let i=0;i<5;i++){m()}`,
+  'nebula-1': `avancer();avancer();avancer();avancer();`,
+  'nebula-2': `for (let i = 0; i < 8; i++) { avancer(); }`,
+  'nebula-3': `while (!surArrivee()) { if (cheminDevant()) { avancer(); } else { tournerADroite(); } }`,
+  'nebula-repare': `avancer();avancer();tournerADroite();avancer();avancer();`,
+  'nebula-4': `let pas = 2; for (let i = 0; i < pas; i++) { avancer(); } tournerAGauche(); pas = pas + 2; for (let i = 0; i < pas; i++) { avancer(); }`,
+  'nebula-defi': `while (!surArrivee()) { if (cheminADroite()) { tournerADroite(); avancer(); } else if (cheminDevant()) { avancer(); } else { tournerAGauche(); } }`,
 }
 
 /** Programmes cassés fournis aux missions « répare » : ils doivent échouer. */
@@ -48,13 +54,14 @@ const brokenPrograms: Record<string, { code: string; expect: string }> = {
   },
   'memora-repare': { code: `let b=0; for(let i=0;i<b;i++){${A}}`, expect: 'incomplete' },
   'fabrika-repare': { code: `function m(){${A}${TD}${A}} for(let i=0;i<4;i++){m()}`, expect: 'crash' },
+  'nebula-repare': { code: `avancer();avancr();tournerADroite();avancer();avancer();`, expect: 'error' },
 }
 
 let fails = 0
 
 for (const [id, code] of Object.entries(solutions)) {
   const content = getContent(id) as PuzzleContent | undefined
-  if (!content || content.kind !== 'grid') {
+  if (!content || (content.kind !== 'grid' && (content.kind as string) !== 'code')) {
     console.log(`✗ ${id} : contenu introuvable`)
     fails++
     continue

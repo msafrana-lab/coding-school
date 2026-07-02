@@ -5,6 +5,8 @@ import PuzzlePlayer from '../game/PuzzlePlayer'
 import StoryPlayer from '../game/StoryPlayer'
 import QuizPlayer from '../game/QuizPlayer'
 import StudioLessonPlayer from '../game/StudioLessonPlayer'
+import CodePlayer from '../game/CodePlayer'
+import DiplomaPlayer from '../game/DiplomaPlayer'
 import Cosmo from '../ui/Cosmo'
 import { Button, SpeechBubble } from '../ui/kit'
 
@@ -49,6 +51,10 @@ export default function LessonPlayer() {
       return <PuzzlePlayer lesson={found.lesson} world={found.world} content={content} />
     case 'studio':
       return <StudioLessonPlayer lesson={found.lesson} world={found.world} content={content} />
+    case 'code':
+      return <CodePlayer lesson={found.lesson} world={found.world} content={content} />
+    case 'diplome':
+      return <DiplomaPlayer lesson={found.lesson} />
     default:
       return null
   }

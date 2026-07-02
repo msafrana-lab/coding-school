@@ -107,6 +107,12 @@ export interface StudioContent {
   steps: StudioStep[]
   /** Projet de départ (JSON du Studio) */
   starter?: Record<string, unknown>
+  /** Plusieurs missions peuvent travailler sur le même projet sauvegardé */
+  projectKey?: string
+}
+
+export interface DiplomaContent {
+  kind: 'diplome'
 }
 
 export type LessonContent =
@@ -115,3 +121,4 @@ export type LessonContent =
   | QuizContent
   | CodeContent
   | StudioContent
+  | DiplomaContent

@@ -53,7 +53,7 @@ export default function StudioLessonPlayer({
 
       <div className="relative min-h-0 flex-1">
         <StudioView
-          storageKey={lesson.id}
+          storageKey={content.projectKey ?? lesson.id}
           steps={content.steps as GuidedStep[]}
           starter={content.starter as { sprites?: Partial<SceneSprite>[]; xml?: string; bg?: string } | undefined}
           onAllDone={complete}

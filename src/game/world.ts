@@ -19,6 +19,7 @@ export type RunResult =
       outcome: 'error'
       steps: Step[]
       reason: 'boucle-infinie' | 'trop-actions' | 'motif-manquant' | 'inconnu'
+      detail?: string
     }
 
 const DIRS: Record<Direction, { dx: number; dy: number }> = {
@@ -175,6 +176,8 @@ export class SimWorld {
         const avancer = () => api.avancer();
         const tournerGauche = () => api.tournerGauche();
         const tournerDroite = () => api.tournerDroite();
+        const tournerAGauche = tournerGauche;
+        const tournerADroite = tournerDroite;
         const cheminDevant = () => api.cheminDevant();
         const cheminAGauche = () => api.cheminAGauche();
         const cheminADroite = () => api.cheminADroite();
@@ -192,8 +195,18 @@ export class SimWorld {
       if (e instanceof RangeError)
         return { outcome: 'error', steps: world.steps, reason: 'boucle-infinie' }
       if (e instanceof ReferenceError)
-        return { outcome: 'error', steps: world.steps, reason: 'motif-manquant' }
-      return { outcome: 'error', steps: world.steps, reason: 'inconnu' }
+        return {
+          outcome: 'error',
+          steps: world.steps,
+          reason: 'motif-manquant',
+          detail: e.message,
+        }
+      return {
+        outcome: 'error',
+        steps: world.steps,
+        reason: 'inconnu',
+        detail: e instanceof Error ? e.message : String(e),
+      }
     }
     // Le programme s'est terminé sans gagner
     if (world.steps.filter((s) => s.t !== 'trace').length === 0)
