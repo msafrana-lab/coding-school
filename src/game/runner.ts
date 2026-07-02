@@ -16,9 +16,19 @@ export function generateCode(ws: Blockly.WorkspaceSvg): { code: string; blockCou
   if (start) code += String(g.blockToCode(start))
   code = g.finish(code)
 
-  const blockCount = ws
-    .getAllBlocks(false)
-    .filter((b) => !b.isShadow() && b.type !== 'quand_demarre').length
+  // On ne compte QUE les blocs qui font partie du programme : la pile attachée
+  // sous « au départ » et les recettes définies. Les blocs brouillon laissés
+  // détachés dans l'atelier ne pénalisent pas les étoiles.
+  let blockCount = 0
+  for (const top of tops) {
+    if (top.type === 'quand_demarre') {
+      blockCount += top
+        .getDescendants(false)
+        .filter((b) => !b.isShadow() && b.type !== 'quand_demarre').length
+    } else if (top.type === 'motif_def_a' || top.type === 'motif_def_b') {
+      blockCount += top.getDescendants(false).filter((b) => !b.isShadow()).length
+    }
+  }
   return { code, blockCount }
 }
 
