@@ -84,11 +84,21 @@ export const choizix: Record<string, LessonContent> = {
     blocks: ['avancer', 'tourner_droite', 'tourner_gauche', 'repeter_jusqua', 'si', 'si_sinon'],
     par: 7,
     goal: 'arrivee',
-    brief: 'La planète se cache dans un renfoncement ! Astuce des explorateurs : garde toujours ta main droite sur le mur… Si chemin à droite → tourne à droite et avance !',
+    brief: 'Astuce des explorateurs : garde toujours ta main droite sur le mur ! Le squelette du programme est prêt — à toi de glisser les bonnes actions dans les bonnes cases.',
     hints: [
-      'Commence par : SI chemin à droite ? → tourner à droite, puis avancer.',
-      'SINON : si chemin devant ? → avancer, sinon → tourner à gauche. Le tout dans « répéter jusqu’à l’arrivée ».',
+      'Dans la case du « si chemin à droite ? » : mets « tourner à droite » PUIS « avancer » juste en dessous. Les DEUX ensemble, sinon la fusée tourne en rond !',
+      'Dans le « si chemin devant ? » : « avancer ». Et dans son « sinon » : « tourner à gauche ».',
     ],
+    starterXml:
+      '<xml xmlns="https://developers.google.com/blockly/xml">' +
+      '<block type="quand_demarre" deletable="false" x="16" y="16"><next>' +
+      '<block type="repeter_jusqua"><statement name="DO">' +
+      '<block type="si_sinon">' +
+      '<value name="COND"><shadow type="capteur"><field name="SENS">cheminADroite</field></shadow></value>' +
+      '<statement name="ELSE">' +
+      '<block type="si_sinon">' +
+      '<value name="COND"><shadow type="capteur"><field name="SENS">cheminDevant</field></shadow></value>' +
+      '</block></statement></block></statement></block></next></block></xml>',
   },
 
   'choizix-quiz': {
@@ -120,8 +130,8 @@ export const choizix: Record<string, LessonContent> = {
     goal: 'les-deux',
     brief: 'La grande traversée ! Des cristaux se cachent dans des recoins. Ton programme « main droite sur le mur » va TOUT explorer tout seul… magique, non ?',
     hints: [
-      'Le même programme que le labyrinthe malin fonctionne ici !',
-      'Si chemin à droite → tourner à droite + avancer. Sinon : si devant → avancer, sinon tourner à gauche.',
+      'Le même programme que le labyrinthe malin fonctionne ici, à l’identique !',
+      'Dans le « si chemin à droite ? » : tourner à droite PUIS avancer (les deux dans la case). Sinon : si chemin devant → avancer, sinon → tourner à gauche.',
     ],
   },
 }

@@ -23,7 +23,7 @@ const FAIL_MESSAGES: Record<string, { pose: CosmoPose; text: string }> = {
   'cristaux-restants': { pose: 'think', text: 'Bien joué pour le chemin… mais il reste des cristaux à ramasser !' },
   rien: { pose: 'point', text: 'Attache des blocs sous « 🚀 au départ », puis appuie sur TESTER.' },
   'boucle-infinie': { pose: 'oops', text: 'Ta boucle tourne sans jamais s’arrêter ! Il lui faut une sortie.' },
-  'trop-actions': { pose: 'oops', text: 'Ouh là, ta fusée a fait trop d’actions. Essaie un programme plus court.' },
+  'trop-actions': { pose: 'oops', text: 'Ta fusée tourne en rond sans jamais atteindre le but ! Regarde bien où elle fait demi-tour, puis modifie ton programme.' },
   'motif-manquant': { pose: 'think', text: 'Ta fusée ne connaît pas ce motif. Ajoute d’abord le bloc « définir le motif » !' },
   inconnu: { pose: 'oops', text: 'Quelque chose cloche dans le programme. Essaie de le modifier puis reteste !' },
 }
@@ -69,8 +69,12 @@ export default function PuzzlePlayer({
 
   useEffect(() => reset(), [lesson.id, reset])
 
-  async function animate(steps: Step[], result: RunResult) {
+  async function animate(allSteps: Step[], result: RunResult) {
     const token = ++cancelRef.current
+    // Un programme qui boucle sans fin produit des centaines de pas : on montre
+    // le début, puis on coupe court pour afficher l'explication tout de suite.
+    const steps =
+      result.outcome !== 'win' && allSteps.length > 140 ? allSteps.slice(0, 140) : allSteps
     const speed = steps.length > 60 ? 0.45 : steps.length > 30 ? 0.7 : 1
     let v = initialVisual(content)
     setVisual(v)
@@ -147,8 +151,14 @@ export default function PuzzlePlayer({
     setVisual(initialVisual(content))
     setPhase('running')
     const { code } = generateCode(wsRef.current)
+    // Trace de diagnostic (lisible dans la console du navigateur)
+    ;(window as unknown as Record<string, unknown>).__astroLastCode = code
     const sim = new SimWorld(content)
     const result = sim.run(code)
+    ;(window as unknown as Record<string, unknown>).__astroLastRun = {
+      outcome: result.outcome,
+      steps: sim.steps.length,
+    }
     void animate(sim.steps, result)
   }
 
@@ -231,9 +241,15 @@ export default function PuzzlePlayer({
 
           {/* Barre d'actions collée en bas */}
           <div className="absolute inset-x-2 bottom-2 z-20 flex items-center gap-2">
-            <Button variant="success" onClick={runProgram} disabled={phase === 'running'} className="flex-1">
-              {phase === 'running' ? '🚀 En vol…' : '▶ TESTER'}
-            </Button>
+            {phase === 'running' ? (
+              <Button variant="danger" onClick={reset} className="flex-1">
+                ■ STOP
+              </Button>
+            ) : (
+              <Button variant="success" onClick={runProgram} className="flex-1">
+                ▶ TESTER
+              </Button>
+            )}
             <Button variant="secondary" onClick={reset} aria-label="Recommencer">
               ↺
             </Button>
@@ -254,9 +270,15 @@ export default function PuzzlePlayer({
               <GridView def={content} visual={visual} />
             </div>
             <div className="flex items-center justify-center gap-2 pb-1">
-              <Button variant="success" size="lg" onClick={runProgram} disabled={phase === 'running'} className="flex-1 max-w-56">
-                {phase === 'running' ? '🚀 En vol…' : '▶ TESTER'}
-              </Button>
+              {phase === 'running' ? (
+                <Button variant="danger" size="lg" onClick={reset} className="flex-1 max-w-56">
+                  ■ STOP
+                </Button>
+              ) : (
+                <Button variant="success" size="lg" onClick={runProgram} className="flex-1 max-w-56">
+                  ▶ TESTER
+                </Button>
+              )}
               <Button variant="secondary" size="lg" onClick={reset} aria-label="Recommencer">
                 ↺
               </Button>
@@ -288,13 +310,17 @@ export default function PuzzlePlayer({
             <div className="rounded-2xl border border-white/20 bg-space-900/95 p-2 shadow-card">
               <GridView def={content} visual={visual} />
             </div>
-            {phase !== 'running' && (
-              <div className="mt-3 flex justify-center">
+            <div className="mt-3 flex justify-center">
+              {phase === 'running' ? (
+                <Button variant="danger" onClick={reset}>
+                  ■ STOP — retour aux blocs
+                </Button>
+              ) : (
                 <Button variant="secondary" onClick={() => setGridBig(false)}>
                   ✕ Retour aux blocs
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -83,8 +83,10 @@ export default function CodePlayer({
 
   useEffect(() => reset(), [lesson.id, reset])
 
-  async function animate(steps: Step[], result: RunResult) {
+  async function animate(allSteps: Step[], result: RunResult) {
     const token = ++cancelRef.current
+    const steps =
+      result.outcome !== 'win' && allSteps.length > 140 ? allSteps.slice(0, 140) : allSteps
     const speed = steps.length > 60 ? 0.45 : steps.length > 30 ? 0.7 : 1
     let v = initialVisual(content)
     setVisual(v)
@@ -206,9 +208,15 @@ export default function CodePlayer({
             <GridView def={content} visual={visual} />
           </div>
           <div className="flex items-center justify-center gap-2 pb-1">
-            <Button variant="success" onClick={run} disabled={phase === 'running'} className="max-w-56 flex-1">
-              {phase === 'running' ? '🚀 En vol…' : '▶ TESTER'}
-            </Button>
+            {phase === 'running' ? (
+              <Button variant="danger" onClick={reset} className="max-w-56 flex-1">
+                ■ STOP
+              </Button>
+            ) : (
+              <Button variant="success" onClick={run} className="max-w-56 flex-1">
+                ▶ TESTER
+              </Button>
+            )}
             <Button variant="secondary" onClick={reset} aria-label="Recommencer">
               ↺
             </Button>
